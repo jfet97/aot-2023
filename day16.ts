@@ -1,4 +1,4 @@
-type StringToNumber<S> = S extends `${infer N extends number}` ? N : never 
+type StringToNumber<S> = S extends `${infer N extends number}` ? N : never;
 
 type FindSantaRow<Row extends readonly any[], RowI> = {
 	[ElI in keyof Row]: Row[ElI] extends '🎅🏼' ? [RowI, ElI] : never
