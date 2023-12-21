@@ -47,43 +47,43 @@ type PositionCoordinates = {
 type WinningBoards<C extends TicTacToeChip> =
   [
     [C, C, C],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell],
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell],
     [C, C, C],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell],
+    [TicTacToeCell, TicTacToeCell, TicTacToeCell],
     [C, C, C]
   ] |
   [
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
+    [C, TicTacToeCell, TicTacToeCell],
+    [C, TicTacToeCell, TicTacToeCell],
+    [C, TicTacToeCell, TicTacToeCell]
   ] |
   [
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip]
+    [TicTacToeCell, C, TicTacToeCell],
+    [TicTacToeCell, C, TicTacToeCell],
+    [TicTacToeCell, C, TicTacToeCell]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C]
+    [TicTacToeCell, TicTacToeCell, C],
+    [TicTacToeCell, TicTacToeCell, C],
+    [TicTacToeCell, TicTacToeCell, C]
   ] |
   [
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C]
+    [C, TicTacToeCell, TicTacToeCell],
+    [TicTacToeCell, C, TicTacToeCell],
+    [TicTacToeCell, TicTacToeCell, C]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
+    [TicTacToeCell, TicTacToeCell, C],
+    [TicTacToeCell, C, TicTacToeCell],
+    [C, TicTacToeCell, TicTacToeCell]
   ];
 
 type DrawBoard = [
