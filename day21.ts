@@ -122,7 +122,7 @@ type NextGame<Game extends TicTacToeGame, NextBoard extends TicTactToeBoard> = {
   state: NextBoard extends WinningBoards<'❌'>
           ? '❌ Won'
           : NextBoard extends WinningBoards<'⭕'>
-            ? '⭕ Won' 
+            ? '⭕ Won'
             : NextBoard extends DrawBoard
               ? 'Draw'
               : NextTurnState[Game["state"]]
