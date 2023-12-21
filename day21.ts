@@ -13,8 +13,8 @@ type TicTacToeGame = {
 };
 
 type EmptyBoard = [
-  ['  ', '  ', '  '], 
-  ['  ', '  ', '  '], 
+  ['  ', '  ', '  '],
+  ['  ', '  ', '  '],
   ['  ', '  ', '  ']
 ];
 
@@ -46,49 +46,49 @@ type PositionCoordinates = {
 
 type WinningBoards<C extends TicTacToeChip> =
   [
-    [C, C, C], 
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
+    [C, C, C],
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
     ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
-    [C, C, C], 
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
+    [C, C, C],
     ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
     ['  ' | TicTacToeChip, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
     [C, C, C]
   ] |
   [
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
+    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
+    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
     [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
   ] |
   [
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip], 
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip], 
+    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
+    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
     ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C], 
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C], 
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
     ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C]
   ] |
   [
-    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip], 
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip], 
+    [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip],
+    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
     ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C]
   ] |
   [
-    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C], 
-    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip], 
+    ['  ' | TicTacToeChip, '  ' | TicTacToeChip, C],
+    ['  ' | TicTacToeChip, C, '  ' | TicTacToeChip],
     [C, '  ' | TicTacToeChip, '  ' | TicTacToeChip]
   ];
 
 type DrawBoard = [
-  [TicTacToeChip, TicTacToeChip, TicTacToeChip], 
-  [TicTacToeChip, TicTacToeChip, TicTacToeChip], 
+  [TicTacToeChip, TicTacToeChip, TicTacToeChip],
+  [TicTacToeChip, TicTacToeChip, TicTacToeChip],
   [TicTacToeChip, TicTacToeChip, TicTacToeChip]
 ];
 
@@ -97,7 +97,7 @@ type SetChipRow<
   C extends TicTacToeChip,
   Y extends 0 | 1 | 2,
   $Acc extends TicTacToeCell[] = []
-> = 
+> =
   $Acc["length"] extends Y
     ? SetChipRow<Row, C, Y, [...$Acc, C]>
     : $Acc["length"] extends Row["length"]
@@ -112,12 +112,12 @@ type SetChip<
   $Acc extends readonly TicTacToeCell[][] = []
 > =
   $Acc["length"] extends X
-    ? SetChip<Board, C, X, Y, [...$Acc, SetChipRow<Board[X], C, Y>]> 
+    ? SetChip<Board, C, X, Y, [...$Acc, SetChipRow<Board[X], C, Y>]>
     : $Acc["length"] extends Board["length"]
       ? $Acc
       : SetChip<Board, C, X, Y, [...$Acc, Board[$Acc["length"]]]>;
 
-type NextGame<Game extends TicTacToeGame, NextBoard extends TicTactToeBoard> = { 
+type NextGame<Game extends TicTacToeGame, NextBoard extends TicTactToeBoard> = {
   board: NextBoard
   state: NextBoard extends WinningBoards<'❌'>
           ? '❌ Won'
