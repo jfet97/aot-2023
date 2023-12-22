@@ -118,6 +118,7 @@ type ValidateSubgrids<Grid extends SudokuGrid> =
 			}[number] extends true ? true : false
 		: false;
 
+// it should be enough to check the rows but...
 type Validate<Grid extends SudokuGrid> =
 	ValidateRows<Grid> | ValidateColumns<Grid> | ValidateSubgrids<Grid> extends true
     ? true
