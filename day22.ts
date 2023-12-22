@@ -31,14 +31,14 @@ type Tuple3Items = [Reindeer, Reindeer, Reindeer];
 type Tuple9Items = [Tuple3Items, Tuple3Items, Tuple3Items];
 type Tuple9ItemsFlattened = [...Tuple3Items, ...Tuple3Items, ...Tuple3Items];
 type SudokuGrid = [
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
-	Tuple9Items, 
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
+	Tuple9Items,
 	Tuple9Items
 ];
 type SudokuGridFlattened = [
@@ -55,7 +55,7 @@ type SudokuGridFlattened = [
 
 // utils
 
-type UnionToIntersection<U> = 
+type UnionToIntersection<U> =
   (U extends any ? (x: U)=>void : never) extends ((x: infer I)=>void) ? I : never;
 
 type Resolve<T> = {[ K in keyof T]: Resolve<T[K]>} & unknown;
@@ -65,7 +65,7 @@ type Resolve<T> = {[ K in keyof T]: Resolve<T[K]>} & unknown;
 type ValidTuple<R extends Reindeer, $U extends Reindeer = R> =
 	[R] extends [never]
 		? []
-		: R extends any 
+		: R extends any
 			? [R, ...ValidTuple<Exclude<$U, R>>]
 			: never;
 
@@ -77,13 +77,13 @@ type _Valid9Items<
 > =
 	[R, $CL] extends [never, []]
 		? true
-		: R extends any 
+		: R extends any
 			? $CG["length"] extends 6
-				? { 
+				? {
 						[K in `${$CL[0]}${$CL[1]}${$CL[2]}`]: ValidTuple<$U>
 					}
 				: $CL["length"] extends 3
-						? { 
+						? {
 								[K in `${$CL[0]}${$CL[1]}${$CL[2]}`]: UnionToIntersection<_Valid9Items<$U, [], $CG>>
 							}
 						: _Valid9Items<Exclude<$U, R>, [...$CL, R], [...$CG, R]>
@@ -113,14 +113,14 @@ type FlattenGrid<Grid extends SudokuGrid> = {
 	[I in keyof Grid]: Flatten3x3Slice<Grid[I]>
 };
 
-type ValidateRows<Grid extends SudokuGrid> = 
+type ValidateRows<Grid extends SudokuGrid> =
 	FlattenGrid<Grid> extends infer $Grid extends SudokuGridFlattened
 		? {
 				[I in keyof $Grid]: Is9TupleValid<$Grid[I]>
 			}[number] extends true ? true : false
 		: false;
 
-type ValidateColumns<Grid extends SudokuGrid> = 
+type ValidateColumns<Grid extends SudokuGrid> =
 	FlattenGrid<Grid> extends infer $Grid extends SudokuGridFlattened
 		? {
 				[I in keyof $Grid]: I extends keyof $Grid[number]
@@ -147,7 +147,7 @@ type SubgridsCoordinates = [
 	[[6, 2], [7, 2], [8, 2]],
 ];
 
-type ValidateSubgrids<Grid extends SudokuGrid> = 
+type ValidateSubgrids<Grid extends SudokuGrid> =
 	{
 		[I in keyof Grid]: I extends keyof SubgridsCoordinates
 			? SubgridsCoordinates[I] extends infer $Subgrid extends SubgridsCoordinates[number]
