@@ -55,55 +55,9 @@ type SudokuGridFlattened = [
 
 // utils
 
-type UnionToIntersection<U> =
-  (U extends any ? (x: U)=>void : never) extends ((x: infer I)=>void) ? I : never;
-
-type Resolve<T> = {[ K in keyof T]: Resolve<T[K]>} & unknown;
-
-//
-
-type ValidTuple<R extends Reindeer, $U extends Reindeer = R> =
-	[R] extends [never]
-		? []
-		: R extends any
-			? [R, ...ValidTuple<Exclude<$U, R>>]
-			: never;
-
-type _Valid9Items<
-	R extends Reindeer = Reindeer,
-	$CL extends Reindeer[] = [],
-	$CG extends Reindeer[] = [],
-	$U extends Reindeer = R,
-> =
-	[R, $CL] extends [never, []]
-		? true
-		: R extends any
-			? $CG["length"] extends 6
-				? {
-						[K in `${$CL[0]}${$CL[1]}${$CL[2]}`]: ValidTuple<$U>
-					}
-				: $CL["length"] extends 3
-						? {
-								[K in `${$CL[0]}${$CL[1]}${$CL[2]}`]: UnionToIntersection<_Valid9Items<$U, [], $CG>>
-							}
-						: _Valid9Items<Exclude<$U, R>, [...$CL, R], [...$CG, R]>
-			: never;
-
-type Valid9Items = Resolve<UnionToIntersection<_Valid9Items>>;
-
 type Is9TupleValid<
 	T extends Tuple9ItemsFlattened
-> = Valid9Items[`${T[0]}${T[1]}${T[2]}` & keyof Valid9Items] extends infer FirstAccess
-	? [FirstAccess] extends [never]
-		? false
-		: FirstAccess[`${T[3]}${T[4]}${T[5]}` & keyof FirstAccess] extends infer SecondAccess
-			? [SecondAccess] extends [never]
-				? false
-				: [T[6], T[7], T[8]] extends SecondAccess
-					? true
-					: false
-			: false
-	: false;
+> = Reindeer extends T[number] ? true : false;
 
 type Flatten3x3Slice<
 	S extends [Tuple3Items, Tuple3Items, Tuple3Items]
@@ -165,10 +119,6 @@ type ValidateSubgrids<Grid extends SudokuGrid> =
 		: false;
 
 type Validate<Grid extends SudokuGrid> =
-	ValidateRows<Grid> extends infer $AreRowsValid extends true
-		? ValidateColumns<Grid> extends infer $AreColumnsValid extends $AreRowsValid
-			? ValidateSubgrids<Grid> extends infer $AreSubgridsValid extends $AreColumnsValid
-				? $AreSubgridsValid
-				: false
-			: false
+	ValidateRows<Grid> | ValidateColumns<Grid> | ValidateSubgrids<Grid> extends true
+    ? true
 		: false;
