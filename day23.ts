@@ -28,8 +28,8 @@ type SetChipRow<
   C extends Cols,
   Chip extends Connect4Chips,
   $R extends readonly Connect4Cell[] = [],
-> = 
-  $R["length"] extends C 
+> =
+  $R["length"] extends C
     ? SetChipRow<Row, C, Chip, [...$R, Chip]>
     : $R["length"] extends 7
       ? $R
@@ -40,15 +40,15 @@ type SetChipBoard<
   R extends Rows,
   NewRow extends Board[0],
   $R extends readonly Connect4Cell[][] = [],
-> = 
-  $R["length"] extends R 
+> =
+  $R["length"] extends R
     ? SetChipBoard<B, R, NewRow, [...$R, NewRow]>
     : $R["length"] extends 6
       ? $R
       : SetChipBoard<B, R, NewRow, [...$R, B[$R["length"]]]>;
 
 type SetChip<
-  B extends Board, 
+  B extends Board,
   C extends Cols,
   Chip extends Connect4Chips,
   $C extends any[] = [],
@@ -62,11 +62,11 @@ type SetChip<
       : B;
 
 type NextTurnState = {
-  '🔴': '🟡'  
-  '🟡': '🔴'  
-  '🔴 Won': '🔴 Won'   
-  '🟡 Won': '🟡 Won'  
-  'Draw': 'Draw'  
+  '🔴': '🟡'
+  '🟡': '🔴'
+  '🔴 Won': '🔴 Won'
+  '🟡 Won': '🟡 Won'
+  'Draw': 'Draw'
 };
 
 type DrawBoard = [
@@ -641,7 +641,7 @@ type Connect4<Game extends { board: Board, state: Connect4State }, C extends Col
   Game["state"] extends infer $State extends Connect4State
     ? $State extends Connect4Chips
       ? SetChip<Game["board"], C, $State> extends infer $NewBoard extends Board
-        ? { 
+        ? {
             board: $NewBoard,
             state: $NewBoard extends WinningBoard<$State>
                     ? `${$State} Won`
