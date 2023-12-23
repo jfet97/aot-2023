@@ -1,8 +1,3 @@
-type StreetSuffixTester<S, SF extends string> =
-	S extends ''
-		? false
-		: S extends SF
-			? true
-			: S extends `${infer _}${infer Rest}`
-				? StreetSuffixTester<Rest, SF>
-				: false;
+// by @alexandercerutti
+type StreetSuffixTester<Street, Suffix extends string> =
+	Street extends `${any}${Suffix}` ? true : false;
