@@ -42,8 +42,6 @@ type MinusOne<N extends number> =
 		? Last
 		: -1;
 
-type IsMinusOne<N extends number> = N extends -1 ? true : false
-
 type IsGreater<N extends number, M extends number> =
 	[ToNumbersTuple<N>, ToNumbersTuple<M>]  extends [infer $N extends number[], infer $M extends number[]]
 	? $N extends []
