@@ -34,3 +34,21 @@ namespace Alternative {
         : never
       : never;
 };
+
+namespace Alternative2 {
+  type ToTuple<
+    N extends number,
+    Res extends readonly any[] = []
+  > = N extends Res["length"]
+    ? Res
+    : ToTuple<N, [...Res, Res["length"]]>;
+
+  type DayCounter<Start extends number, End extends number> =
+    ToTuple<Start> extends infer $S extends number[]
+      ? ToTuple<End> extends infer $E extends number[]
+        ? [...$E, $E["length"]] extends [...$S, ...infer Rest extends number[]]
+          ? Rest[number]
+          : never
+        : never
+      : never;
+};
