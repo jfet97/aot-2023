@@ -29,8 +29,8 @@ namespace Alternative {
 
   type DayCounter<Start extends number, End extends number> =
     ToTupleNever<Start> extends infer $N extends never[] // $N = ToTupleNever<Start>
-    ? ToTuple<Start, End, $N> extends infer Res extends readonly any[]
-      ? Res[number]
-      : never
-    : never;
+      ? ToTuple<Start, End, $N> extends infer Res extends readonly any[]
+        ? Res[number]
+        : never
+      : never;
 };
