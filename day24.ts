@@ -51,7 +51,7 @@ type IsGreater<N extends number, M extends number> =
 			: [MinusOne<N>, MinusOne<M>] extends [infer $PN extends number, infer $PM extends number]
 				? IsGreater<$PN, $PM>
 				: false
-	: false
+	: false;
 
 // maze utils
 
