@@ -49,11 +49,6 @@ type IsGreater<N extends number, M extends number> =
     : false
   : never;
 
-type Max<N extends number, M extends number> =
-  IsGreater<N, M> extends true
-    ? N
-    : M;
-
 type Min<N extends number, M extends number> =
   IsGreater<N, M> extends true
     ? M
