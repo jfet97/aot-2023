@@ -149,23 +149,24 @@ type SetNodeData<
 type GetMinCostCell<
   Cells extends NodeDataSuperType[],
   MinCell extends NodeDataSuperType,
+  Rest extends NodeDataSuperType[] = [],
 > =
   Cells extends [infer $Cell extends NodeDataSuperType, ...infer $Cells extends NodeDataSuperType[]]
     ? Min<$Cell["cost"], MinCell["cost"]> extends $Cell["cost"]
-      ? GetMinCostCell<$Cells, $Cell>
-      : GetMinCostCell<$Cells, MinCell>
-    : MinCell;
+      ? GetMinCostCell<$Cells, $Cell, [...Rest, MinCell]>
+      : GetMinCostCell<$Cells, MinCell, Rest>
+    : { min: MinCell, rest: Rest };
 
-type RemoveCostCell<
-  Cells extends NodeDataSuperType[],
-  C extends Coordinates,
-  Res extends NodeDataSuperType[] = [],
-> =
-  Cells extends [infer $Cell extends NodeDataSuperType, ...infer $Cells extends NodeDataSuperType[]]
-    ? $Cell["cell"] extends C
-      ? [...Res, ...$Cells]
-      : RemoveCostCell<$Cells, C, [...Res, $Cell]>
-    : never
+// type RemoveCostCell<
+//   Cells extends NodeDataSuperType[],
+//   C extends Coordinates,
+//   Res extends NodeDataSuperType[] = [],
+// > =
+//   Cells extends [infer $Cell extends NodeDataSuperType, ...infer $Cells extends NodeDataSuperType[]]
+//     ? $Cell["cell"] extends C
+//       ? [...Res, ...$Cells]
+//       : RemoveCostCell<$Cells, C, [...Res, $Cell]>
+//     : never
 
 type FindExit<Forest extends MazeMatrix> = {
 	[I in keyof Forest]: Forest[I] extends infer $Forest_I extends MazeMatrix[number]
@@ -202,11 +203,12 @@ namespace SolveMaze {
           ? TuplifyUnion<$NeighborNodeData> extends infer $NeighborNodeDataTuple extends NodeDataSuperType[]
             ? [...$NeighborNodeDataTuple, ...Frontier] extends infer $Frontier extends NodeDataSuperType[]
               ? $Frontier extends [infer $FrontierHead extends NodeDataSuperType, ...infer $FrontierTail extends NodeDataSuperType[]]
-                ? GetMinCostCell<$FrontierTail, $FrontierHead> extends infer $MinCostCell extends NodeDataSuperType
-                  ? RemoveCostCell<$Frontier, $MinCostCell["cell"]> extends infer $NextFrontier extends NodeDataSuperType[]
+                ? GetMinCostCell<$FrontierTail, $FrontierHead> extends {
+                    min: infer $MinCostCell extends NodeDataSuperType,
+                    rest: infer $NextFrontier extends NodeDataSuperType[]
+                  }
                     ? _SolveMaze<Forest, $MinCostCell, Exit, $NextFrontier>
                     : never
-                  : never
                 : "unsolvable"
               : never
             : never
