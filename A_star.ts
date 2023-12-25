@@ -100,22 +100,6 @@ type CoordinatesDown<C extends Coordinates> = [PlusOne<C[0]>, C[1]];
 type CoordinatesLeft<C extends Coordinates> = [C[0], MinusOne<C[1]>];
 type CoordinatesRight<C extends Coordinates> = [C[0], PlusOne<C[1]>];
 
-type GetAlleyNeighbors<Forest extends MazeMatrix, C extends Coordinates, Parent extends Coordinates> = {
-	[I in keyof Forest]: Forest[I] extends infer $Forest_I extends MazeMatrix[number]
-		? {
-			[J in keyof $Forest_I]: [ParseNumber<I>, ParseNumber<J>] extends [infer $IN extends number, infer $JN extends number]
-        ? ManhattanDistance<[C[0], C[1]], [$IN, $JN]> extends 1
-          ? IsAlley<$Forest_I[J]> extends true
-            ? [$IN, $JN] extends Parent
-              ? never
-              : [$IN, $JN]
-            : never
-          : never
-        : never
-		}[number]
-		: never
-}[number];
-
 type NodeData<
   C extends Coordinates,
   PathCost extends number,
@@ -174,38 +158,58 @@ namespace SolveMaze {
       ? GetStartExitPath<$Parent, [EndNode["cell"], ...Res]>
       : [EndNode["cell"], ...Res];
 
+  type GetAlleyNeighbors<Forest extends MazeMatrix, C extends Coordinates, Visited extends Coordinates[]> = {
+    [I in keyof Forest]: Forest[I] extends infer $Forest_I extends MazeMatrix[number]
+      ? {
+        [J in keyof $Forest_I]: [ParseNumber<I>, ParseNumber<J>] extends [infer $IN extends number, infer $JN extends number]
+          ? ManhattanDistance<[C[0], C[1]], [$IN, $JN]> extends 1
+            ? IsAlley<$Forest_I[J]> extends true
+              ? [$IN, $JN] extends Visited[number]
+                ? never
+                : [$IN, $JN]
+              : never
+            : never
+          : never
+      }[number]
+      : never
+  }[number];
+
+  type MergeFrontiers<
+    NeighborsFiltered extends NodeDataSuperType[],
+    Frontier extends NodeDataSuperType[],
+  > = [...NeighborsFiltered, ...Frontier];
+
   type _SolveMaze<
     Forest extends MazeMatrix,
     CurrentPosition extends NodeDataSuperType,
     Exit extends Coordinates,
     Frontier extends NodeDataSuperType[] = [],
+    Visited extends Coordinates[] = [],
   > =
     CurrentPosition["cell"] extends Exit
       ? GetStartExitPath<CurrentPosition> extends infer $Path extends Coordinates[]
         ? $Path
         : never
-      :  CurrentPosition["parent"] extends infer $Parent
-        ? GetAlleyNeighbors<
+      : GetAlleyNeighbors<
           Forest,
           CurrentPosition["cell"],
-          $Parent extends NodeDataSuperType ? $Parent["cell"] : [-1, -1]
+          Visited
         > extends infer $Neighbors extends Coordinates
           ? SetNodeData<$Neighbors, Sum<CurrentPosition["fromStartCost"], 1>, Exit, CurrentPosition> extends infer $NeighborNodeData extends NodeDataSuperType
             ? TuplifyUnion<$NeighborNodeData> extends infer $NeighborNodeDataTuple extends NodeDataSuperType[]
-              ? [...$NeighborNodeDataTuple, ...Frontier] extends infer $Frontier extends NodeDataSuperType[]
+              ? MergeFrontiers<$NeighborNodeDataTuple, Frontier> extends infer $Frontier extends NodeDataSuperType[]
                 ? $Frontier extends [infer $FrontierHead extends NodeDataSuperType, ...infer $FrontierTail extends NodeDataSuperType[]]
                   ? GetMinCostCell<$FrontierTail, $FrontierHead> extends {
                       min: infer $MinCostCell extends NodeDataSuperType,
                       rest: infer $NextFrontier extends NodeDataSuperType[]
                     }
-                      ? _SolveMaze<Forest, $MinCostCell, Exit, $NextFrontier>
+                      ? _SolveMaze<Forest, $MinCostCell, Exit, $NextFrontier, [...Visited, CurrentPosition["cell"]]>
                       : never
                   : "unsolvable"
                 : never
               : never
             : never
-          :never
-        : never;
+          :never;
 
   export type SolveMaze<Forest extends MazeMatrix> =
     [FindExit<Forest>, FindSanta<Forest>] extends [infer $Exit extends Coordinates, infer $Santa extends Coordinates]
@@ -275,7 +279,6 @@ type Maze1_NoExit = [
 type Path_1 = SolveMaze.SolveMaze<Maze1_NoExit>;
 //   ^?
 
-
 type Maze2 = [
   ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄"],
   ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "  ", "🎄", "🎅", "🎄"],
@@ -291,7 +294,7 @@ type Maze2 = [
 
 type Path_2 = SolveMaze.SolveMaze<Maze2>;
 type Moves_2 = SolveMaze.ToMoves<Path_2>;
-//   ^?
+   // ^?
 
 type Maze3_Trapped = [
   ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄"],
@@ -323,4 +326,21 @@ type Maze4_NoSanta = [
 ];
 
 type Path_4 = SolveMaze.SolveMaze<Maze4_NoSanta>;
+//   ^?
+
+type Maze5 = [
+  ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄"],
+  ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄"],
+  ["🎄", "🎄", "🎄", "🎄", "  ", "🎄", "  ", "  ", "🎅", "🎄"],
+  ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "  ", "  ", "  ", "🎄"],
+  ["🎄", "  ", "  ", "🎄", "  ", "🎄", "  ", "  ", "  ", "🎄"],
+  ["  ", "  ", "  ", "🎄", "  ", "🎄", "  ", "  ", "  ", "🎄"],
+  ["🎄", "  ", "🎄", "🎄", "  ", "🎄", "  ", "  ", "  ", "🎄"],
+  ["🎄", "  ", "  ", "🎄", "  ", "🎄", "  ", "  ", "  ", "🎄"],
+  ["🎄", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🎄", "🎄"],
+  ["🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄", "🎄"],
+];
+
+type Path_5 = SolveMaze.SolveMaze<Maze5>;
+type Moves_5 = SolveMaze.ToMoves<Path_5>;
 //   ^?
