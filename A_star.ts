@@ -175,9 +175,33 @@ namespace SolveMaze {
   }[number];
 
   type MergeFrontiers<
+    Forest extends MazeMatrix,
     NeighborsFiltered extends NodeDataSuperType[],
     Frontier extends NodeDataSuperType[],
-  > = [...NeighborsFiltered, ...Frontier];
+  > = ([NeighborsFiltered[number], Frontier[number]] extends [infer $Neighbors extends NodeDataSuperType, infer $Frontier extends NodeDataSuperType]
+    ? {
+        [I in keyof Forest]: Forest[I] extends infer $Forest_I extends MazeMatrix[number]
+          ? {
+              [J in keyof $Forest_I]: [ParseNumber<I>, ParseNumber<J>] extends [infer $IN extends number, infer $JN extends number]
+                ? [
+                    Extract<$Neighbors, { cell: [$IN, $JN] }>,
+                    Extract<$Frontier, { cell: [$IN, $JN] }>
+                  ] extends [infer $N extends NodeDataSuperType, infer $F extends NodeDataSuperType]
+                    ? [$N] extends [never]
+                      ? $F
+                      : [$F] extends [never]
+                        ? $N
+                        : Min<$N["cost"], $F["cost"]> extends $N["cost"]
+                          ? $N
+                          : $F
+                    : never
+                : never
+            }[number]
+          : never
+      }[number]
+    : never) extends infer $MergedFrontier extends NodeDataSuperType
+      ? TuplifyUnion<$MergedFrontier>
+      : never;
 
   type _SolveMaze<
     Forest extends MazeMatrix,
@@ -197,7 +221,7 @@ namespace SolveMaze {
         > extends infer $Neighbors extends Coordinates
           ? SetNodeData<$Neighbors, Sum<CurrentPosition["fromStartCost"], 1>, Exit, CurrentPosition> extends infer $NeighborNodeData extends NodeDataSuperType
             ? TuplifyUnion<$NeighborNodeData> extends infer $NeighborNodeDataTuple extends NodeDataSuperType[]
-              ? MergeFrontiers<$NeighborNodeDataTuple, Frontier> extends infer $Frontier extends NodeDataSuperType[]
+              ? MergeFrontiers<Forest, $NeighborNodeDataTuple, Frontier> extends infer $Frontier extends NodeDataSuperType[]
                 ? $Frontier extends [infer $FrontierHead extends NodeDataSuperType, ...infer $FrontierTail extends NodeDataSuperType[]]
                   ? GetMinCostCell<$FrontierTail, $FrontierHead> extends {
                       min: infer $MinCostCell extends NodeDataSuperType,
